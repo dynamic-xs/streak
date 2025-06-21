@@ -8,13 +8,13 @@ import AddHabitDialog from "@/components/add-habit-dialog";
 import CalendarView from "@/components/calendar-view";
 import StatsView from "@/components/stats-view";
 import ManageView from "@/components/manage-view";
-import { useHabits } from "@/hooks/use-habits";
+import useLocalStorage from "../hooks/useLocalStorage";
 import { useTheme } from "@/components/theme-provider";
 
 export default function Home() {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [activeTab, setActiveTab] = useState("today");
-  const { data: habits = [], isLoading } = useHabits();
+  const [habits, setHabits] = useLocalStorage("habits", []);
   const { theme, toggleTheme } = useTheme();
 
   const today = format(new Date(), "MMM dd");
@@ -23,17 +23,6 @@ export default function Home() {
   const completionPercentage = totalHabits > 0 ? Math.round((completedToday / totalHabits) * 100) : 0;
   const totalStreaks = habits.reduce((sum, habit) => sum + habit.currentStreak, 0);
   const allHabitsCompleted = totalHabits > 0 && completionPercentage === 100;
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-app flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading your habits...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-app">
